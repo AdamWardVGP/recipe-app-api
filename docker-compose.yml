@@ -2,8 +2,9 @@
 #the current versiona t the time this was built
 version: "3.9"
 
-#This defines the service for our app
+#This defines our services
 services: 
+  #defines a service named "app"
   app:
     #Build the docker file in our current directory
     build:
@@ -21,3 +22,35 @@ services:
     #Command that will run the service
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      #db is the name of the service created by docker compose named below.
+      #It is configured to use the same dev db name, and credentials  also specified in the below service.
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    #defines the DB service as a dependancy.
+    depends_on:
+      - db
+
+
+  #defines a service named "db"
+  db:
+    #https://hub.docker.com/_/postgres
+    #Alpine is a lighter weight version of postgres
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+      #sets the initial config for the DB, named "devdb" and adds a user "devuser" with a password "changeme"
+      #all of these credentials are just for local dev testing purposes, and wont be useful for any production
+      #related database values
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+
+volumes:
+  #name of the volume
+  #No need to add anything else, docker compose will store this in the default location
+  dev-db-data:
