@@ -1,0 +1,40 @@
+---
+#Github actions file definition for our lint checks.
+#yml schema is available on: 
+#https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+#Name as the file will appear in github actions
+name: Checks
+
+#Trigger jobs on git push action
+on: [push]
+
+# Defines a job with an id "test-lint"
+# Name is human friendly name in the actions interface
+# runs-on defines different runners available on github, this defines the OS 
+#   github actions will use to run on
+jobs:
+  test-lint:
+    name: Test and Lint
+    runs-on: ubuntu-20.04
+    #Defines steps to run for this job
+    steps:
+      #Name is friendly name seen in the actions interface
+      - name: Login to Docker Hub
+        #Premade action provided in the github actions repo
+        #https://github.com/marketplace/actions/docker-login
+        uses: docker/login-action@v1
+        with:
+          #Credentials stored within github secrets
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Checkout
+        #Performs a git checkout on our repo
+        #https://github.com/marketplace/actions/checkout
+        uses: actions/checkout@v2
+      - name: Test
+        #runs our project unit tests
+        run: docker-compose run --rm app sh -c "python manage.py test"
+      - name: Lint
+        #Runs  our lint checks
+        run: docker-compose run --rm app sh -c "flake8"
