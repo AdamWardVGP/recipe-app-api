@@ -1,5 +1,5 @@
 #Version of docker compose syntax. Ensures we're targeting 
-#the current versiona t the time this was built
+#the current version at the time this was built
 version: "3.9"
 
 #This defines our services
@@ -30,6 +30,8 @@ services:
       - DB_USER=devuser
       - DB_PASS=changeme
     #defines the DB service as a dependancy.
+    #This ensures we start the DB, but not that it's running and available
+    # will need to fix this race condition.
     depends_on:
       - db
 
