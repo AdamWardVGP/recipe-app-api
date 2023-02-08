@@ -26,12 +26,14 @@ class CommandTest(SimpleTestCase):
     def test_wait_for_db_delay(self, patched_sleep, patched_check):
         """Test waiting for DB when OperationalError is returned"""
         # First 2 times we call mocked method Psycopg2Error will return
-        #   the next 3 times return OperationalError. the 5th time will return "True"
+        # the next 3 times return OperationalError. the 5th time will
+        # return "True"
         #
-        # Postgres has different start states, depending on when the connection
-        # occurs. If the app isnt accepting connections yet you will get Psycopg2Error
-        # once its ready to accept connections but the DB is still initializing you'll get 
-        #   Operational Error
+        # Postgres has different start states, depending on when the
+        # connection occurs. If the app isnt accepting connections
+        # yet you will get Psycopg2Error once its ready to accept
+        # connections but the DB is still initializing you'll get
+        #  Operational Error
         patched_check.side_effect = [Psycopg2Error] * 2 + \
             [OperationalError] * 3 + [True]
 
