@@ -28,6 +28,7 @@ def create_recipe(user, **params):
         'title': 'Sample recipe title',
         'time_minutes': 22,
         'price': Decimal('5.25'),
+        'description': 'Sample Description',
         'link': 'http://example.com/recipe.pdf',
     }
     defaults.update(params)
@@ -35,6 +36,8 @@ def create_recipe(user, **params):
     recipe = Recipe.objects.create(user=user, **defaults)
     return recipe
 
+def create_user(**params):
+    """Create and return a new user"""
 
 class PublicRecipeAPITests(TestCase):
     """Test unauthenticated API requests."""
